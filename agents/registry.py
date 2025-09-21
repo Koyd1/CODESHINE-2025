@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List
 
-from agents import analyst, copywriter, ideator
+from agents import analyst, copywriter, finance, ideator, technician
 
 AgentHandler = Callable[[Dict[str, Any]], Dict[str, Any]]
 
@@ -46,6 +46,22 @@ _AGENT_CONFIGS: List[AgentConfig] = [
         description="Создает тексты для промо-материалов с учётом выбранной концепции.",
         handler=copywriter.texts,
         result_key="copy",
+    ),
+    AgentConfig(
+        id="finance_assessment",
+        title="Финансовый директор",
+        owner="Finance",
+        description="Оценивает бюджет, риски и ростовые возможности проекта.",
+        handler=finance.assessment,
+        result_key="finance",
+    ),
+    AgentConfig(
+        id="technician_blueprint",
+        title="Технический директор",
+        owner="Technician",
+        description="Прорабатывает архитектуру и технический план реализации.",
+        handler=technician.blueprint,
+        result_key="tech_plan",
     ),
 ]
 
