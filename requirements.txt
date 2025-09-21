@@ -12,6 +12,6 @@ google-api-python-client>=2.127
 google-auth>=2.29
 sounddevice==0.5.2
 numpy>=1.26,<2.0
-scipy>=1.11,<1.12
+scipy>=1.14
 pydub==0.25.1
 google-genai==1.38.0
