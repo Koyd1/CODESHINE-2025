@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import io
+import logging
 import os
 import uuid
 from dataclasses import dataclass
@@ -17,6 +18,8 @@ TRANSCRIPT_CLEANUP_PROMPT = (
 MEETING_SUMMARY_PROMPT = (
     BASE_DIR / "prompts" / "meeting_summary.md"
 ).read_text(encoding="utf-8")
+
+logger = logging.getLogger(__name__)
 
 class AudioProcessingError(RuntimeError):
     """Raised when audio transcription or post-processing fails."""
@@ -83,7 +86,11 @@ def normalize_transcript(transcript: str, *, model: Optional[str] = None) -> str
             model=model,
         )
     except LLMError as exc:  # pragma: no cover - сетевые ошибки
-        raise AudioProcessingError(f"Не удалось нормализовать транскрипт: {exc}") from exc
+        logger.warning(
+            "Transcript normalisation skipped because backend is unavailable: %s",
+            exc,
+        )
+        return transcript.strip()
     return cleaned.strip()
 
 def summarize_transcript(transcript: str, *, model: Optional[str] = None) -> str:
@@ -107,7 +114,11 @@ def summarize_transcript(transcript: str, *, model: Optional[str] = None) -> str
             model=model,
         )
     except LLMError as exc:  # pragma: no cover - сетевые ошибки
-        raise AudioProcessingError(f"Не удалось составить саммари: {exc}") from exc
+        logger.warning(
+            "Meeting summary skipped because backend is unavailable: %s",
+            exc,
+        )
+        return ""
 
     return summary.strip()
 
