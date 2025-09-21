@@ -28,9 +28,9 @@ def blueprint(state: Dict[str, Any]) -> Dict[str, Any]:
             {
                 "role": "user",
                 "content": (
-                    f"Бриф:\n{brief}\n\nICP:\n{icp}\n\n"
-                    f"Концепции:\n{concepts}\n\nФинансовые вводные:\n{finance}\n\n"
-                    f"Контекст из памяти:\n{context}\n\nОпиши техническую реализацию."
+                    f"Brief:\n{brief}\n\nICP:\n{icp}\n\n"
+                    f"Concepts:\n{concepts}\n\nFinancial Inputs:\n{finance}\n\n"
+                    f"Context from Memory:\n{context}\n\nDescribe the technical implementation."
                 ),
             },
         ],

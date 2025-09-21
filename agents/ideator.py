@@ -80,8 +80,8 @@ def concepts(state: Dict[str, Any]) -> Dict[str, Any]:
             {
                 "role": "user",
                 "content": (
-                    f"Бриф:\n{brief}\n\nICP:\n{icp}\n\n"
-                    f"Контекст из памяти:\n{context}\n\nПредложи концепции."
+                    f"Brief:\n{brief}\n\nICP:\n{icp}\n\n"
+                    f"Memory Context:\n{context}\n\nSuggest concepts."
                 ),
             },
         ],

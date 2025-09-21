@@ -22,14 +22,14 @@ from typing import Iterable, List, Tuple
 def transcribe_voice(filename="audio.wav"):
     model = whisper.load_model("base")
     result = model.transcribe(filename, language="en")
-    print("📝 Распознанный текст:")
+    print("Recognized text:")
     print(result["text"])
 
 
 def convert_mp3_to_wav(mp3_filename, wav_filename="audio.wav"):
     audio = AudioSegment.from_mp3(mp3_filename)
     audio.export(wav_filename, format="wav")
-    print(f"✅ Конвертация {mp3_filename} в {wav_filename} завершена.")
+    print(f"Conversion of {mp3_filename} to {wav_filename} completed.")
 
 # def split_text_by_context(text):
 #     max_characters = 200

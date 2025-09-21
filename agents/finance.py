@@ -27,9 +27,9 @@ def assessment(state: Dict[str, Any]) -> Dict[str, Any]:
             {
                 "role": "user",
                 "content": (
-                    f"Бриф:\n{brief}\n\nICP:\n{icp}\n\n"
-                    f"Концепции:\n{concepts}\n\nКонтекст из памяти:\n{context}\n\n"
-                    "Сформируй финансовый анализ по пунктам."
+                    f"Brief:\n{brief}\n\nICP:\n{icp}\n\n"
+                    f"Concepts:\n{concepts}\n\nMemory Context:\n{context}\n\n"
+                    "Formulate a financial analysis in points."
                 ),
             },
         ],
@@ -37,7 +37,6 @@ def assessment(state: Dict[str, Any]) -> Dict[str, Any]:
     )
 
     artifact = save_artifact(run_id, "finance_assessment.md", response)
-
     board = deepcopy(state.get("board", {}))
     board.setdefault("finance_assessment", {})
     board["finance_assessment"].update({"status": "Done", "notes": response})

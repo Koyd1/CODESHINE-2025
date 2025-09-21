@@ -40,7 +40,7 @@ def _get_credentials():
     if file_path:
         credentials_path = Path(file_path).expanduser()
         if not credentials_path.exists():
-            raise GoogleDriveError(f"Файл с ключом не найден: {credentials_path}")
+            raise GoogleDriveError(f"File not found: {credentials_path}")
         return service_account.Credentials.from_service_account_file(
             str(credentials_path), scopes=SCOPES
         )
@@ -60,11 +60,11 @@ def upload_run_to_drive(
 
     if build is None or MediaFileUpload is None:
         raise GoogleDriveError(
-            "Библиотеки google-api-python-client не доступны в окружении."
+            "google-api-python-client libraries are not available in the environment."
         )
 
     if not run_dir.exists():
-        raise GoogleDriveError(f"Каталог с артефактами не найден: {run_dir}")
+        raise GoogleDriveError(f"Directory not found: {run_dir}")
 
     credentials = _get_credentials()
     service = build("drive", "v3", credentials=credentials)
@@ -83,7 +83,7 @@ def upload_run_to_drive(
     )
     folder_id = folder.get("id")
     if not folder_id:
-        raise GoogleDriveError("Не удалось создать папку в Google Drive")
+        raise GoogleDriveError("Failed to create folder in Google Drive")
 
     for path in sorted(run_dir.iterdir()):
         if path.is_dir():

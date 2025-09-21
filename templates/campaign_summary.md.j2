@@ -1,22 +1,22 @@
-# Кампания: {{ project_title }}
+# Company: {{ project_title }}
 
-## Саммари митинга
+## Meeting Summary
 {{ meeting_summary or brief }}
 
 {% if normalized_transcript %}
-## Нормализованный транскрипт
+## Normalized Transcript
 {{ normalized_transcript }}
 {% endif %}
 
 {% if audio_path %}
-> Исходный аудиофайл: `{{ audio_path }}`
+> Original audio file: `{{ audio_path }}`
 {% endif %}
 
-## Итоговый план
+## Final Plan
 {{ plan_markdown }}
 
 {% if agent_sections %}
-## Отчёты агентов
+## Agent Reports
 {% for section in agent_sections %}
 ### {{ section.title }}
 {{ section.body }}
@@ -27,20 +27,21 @@
 {{ icp_markdown }}
 {% endif %}
 {% if concepts_markdown %}
-### Концепции
+### Concepts
 {{ concepts_markdown }}
 {% endif %}
 {% if copy_markdown %}
-### Копирайтинг
+### Copywriting
 {{ copy_markdown }}
 {% endif %}
 {% endif %}
 
 {% if todo_items %}
-## Чек-лист внедрения
+## Implementation Checklist
 {% for item in todo_items %}- [{{ 'x' if item.done else ' ' }}] {{ item.text }}
 {% endfor %}
 {% endif %}
 
 ---
-Сгенерировано {{ timestamp }}.
+
+Generated {{ timestamp }}.

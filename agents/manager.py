@@ -205,10 +205,10 @@ def plan(state: Dict[str, Any]) -> Dict[str, Any]:
             {
                 "role": "user",
                 "content": (
-                    "Тебе нужно превратить бриф в пошаговый план."
-                    "\nИспользуй формат с колонками Backlog/Doing/Done"
-                    " и добавь критерии приёмки."
-                    f"\nБриф:\n{brief}\n\nКонтекст:\n{context}"
+                    "You need to turn the brief into a step-by-step plan."
+                    "\nUse the format with columns Backlog/Doing/Done"
+                    " and add acceptance criteria."
+                    f"\nBrief:\n{brief}\n\nContext:\n{context}"
                 ),
             },
         ],
@@ -219,7 +219,7 @@ def plan(state: Dict[str, Any]) -> Dict[str, Any]:
 
     board = {
         "manager_plan": {
-            "title": "Планирование",
+            "title": "Planning",
             "owner": "Manager",
             "status": "Done",
             "notes": plan_markdown,
@@ -237,7 +237,7 @@ def plan(state: Dict[str, Any]) -> Dict[str, Any]:
         }
 
     board["manager_summary"] = {
-        "title": "Финальная сборка",
+        "title": "Final Assembly",
         "owner": "Manager",
         "status": "Backlog",
     }
@@ -277,10 +277,10 @@ def assemble(state: Dict[str, Any]) -> Dict[str, Any]:
             {
                 "role": "user",
                 "content": (
-                    "Проверь, что у нас есть все артефакты: ICP, концепции, тексты."
-                    " Если чего-то не хватает, перечисли проблемы."
-                    " Затем сформируй чек-лист из 5 задач внедрения."
-                    f"\nICP:\n{icp}\n\nКонцепции:\n{concepts}\n\nТексты:\n{copy}"
+                    "Verify that we have all the artifacts: ICP, concepts, texts."
+                    " If anything is missing, list the issues."
+                    " Then create a checklist of 5 implementation tasks."
+                    f"\nICP:\n{icp}\n\nConcepts:\n{concepts}\n\nTexts:\n{copy}"
                 ),
             },
         ],
@@ -297,11 +297,11 @@ def assemble(state: Dict[str, Any]) -> Dict[str, Any]:
 
     if not todo_items:
         todo_items = [
-            {"text": "Уточнить детали кампании с клиентом", "done": False},
-            {"text": "Подготовить визуальные материалы", "done": False},
-            {"text": "Сверстать лендинг и посадочные страницы", "done": False},
-            {"text": "Запланировать публикации", "done": False},
-            {"text": "Настроить аналитику и отчётность", "done": False},
+            {"text": "Clarify campaign details with the client", "done": False},
+            {"text": "Prepare visual materials", "done": False},
+            {"text": "Layout the landing and landing pages", "done": False},
+            {"text": "Plan publications", "done": False},
+            {"text": "Set up analytics and reporting", "done": False},
         ]
 
     agent_sections = []
@@ -314,7 +314,7 @@ def assemble(state: Dict[str, Any]) -> Dict[str, Any]:
             agent_sections.append({"id": agent_id, "title": config.title, "body": content})
 
     summary_markdown = SUMMARY_TEMPLATE.render(
-        project_title=state.get("project_title", "Маркетинговая кампания"),
+        project_title=state.get("project_title", "Marketing Campaign"),
         brief=brief,
         plan_markdown=plan_md,
         icp_markdown=icp,

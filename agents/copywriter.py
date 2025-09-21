@@ -84,9 +84,9 @@ def texts(state: Dict[str, Any]) -> Dict[str, Any]:
             {
                 "role": "user",
                 "content": (
-                    f"Бриф:\n{brief}\n\nICP:\n{icp}\n\nКонцепции:\n{concepts}\n\n"
-                    f"Контекст памяти:\n{context}\n\n"
-                    "Используй лучший из предложенных концептов и создай тексты."
+                    f"Brief:\n{brief}\n\nICP:\n{icp}\n\nConcepts:\n{concepts}\n\n"
+                    f"Memory Context:\n{context}\n\n"
+                    "Use the best of the proposed concepts and create texts."
                 ),
             },
         ],
@@ -94,7 +94,6 @@ def texts(state: Dict[str, Any]) -> Dict[str, Any]:
     )
 
     artifact = save_artifact(run_id, "copywriter_texts.md", response)
-
     board = deepcopy(state.get("board", {}))
     board.setdefault("copywriter_texts", {})
     board["copywriter_texts"].update({"status": "Done", "notes": response})

@@ -7,7 +7,9 @@ import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
+
 from openai import OpenAI
+
 from agents._llm import LLMError, chat
 from memory import rag
 
@@ -21,8 +23,10 @@ MEETING_SUMMARY_PROMPT = (
 
 logger = logging.getLogger(__name__)
 
+
 class AudioProcessingError(RuntimeError):
     """Raised when audio transcription or post-processing fails."""
+
 
 @dataclass
 class MeetingMaterials:
@@ -33,6 +37,7 @@ class MeetingMaterials:
     raw_artifact: Optional[Path] = None
     normalized_artifact: Optional[Path] = None
     summary_artifact: Optional[Path] = None
+
 
 def transcribe_audio_bytes(
     file_bytes: bytes,
@@ -66,6 +71,7 @@ def transcribe_audio_bytes(
         raise AudioProcessingError("Whisper вернул пустой ответ")
     return text.strip()
 
+
 def normalize_transcript(transcript: str, *, model: Optional[str] = None) -> str:
     """Clean up the transcript using the main LLM backend."""
 
@@ -93,6 +99,7 @@ def normalize_transcript(transcript: str, *, model: Optional[str] = None) -> str
         return transcript.strip()
     return cleaned.strip()
 
+
 def summarize_transcript(transcript: str, *, model: Optional[str] = None) -> str:
     """Produce a compact meeting summary for downstream agents."""
 
@@ -106,8 +113,8 @@ def summarize_transcript(transcript: str, *, model: Optional[str] = None) -> str
                 {
                     "role": "user",
                     "content": (
-                        "Сделай структурированное саммари митинга."
-                        f"\n\nНормализованный транскрипт:\n{transcript.strip()}"
+                        "Make a structured meeting summary."
+                        f"\n\nNormalized Transcript:\n{transcript.strip()}"
                     ),
                 },
             ],

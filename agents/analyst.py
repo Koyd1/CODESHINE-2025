@@ -70,14 +70,13 @@ def icp(state: Dict[str, Any]) -> Dict[str, Any]:
             {"role": "system", "content": PROMPT_TEXT},
             {
                 "role": "user",
-                "content": f"Бриф:\n{brief}\n\nКонтекст:\n{context}\n\nСформируй выводы.",
+                "content": f"Brief:\n{brief}\n\nContext:\n{context}\n\nSummarize the findings.",
             },
         ],
         model=model,
     )
 
     artifact = save_artifact(run_id, "analyst_icp.md", response)
-
     board = deepcopy(state.get("board", {}))
     board.setdefault("analyst_icp", {})
     board["analyst_icp"].update({"status": "Done", "notes": response})

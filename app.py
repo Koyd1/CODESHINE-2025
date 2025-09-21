@@ -21,8 +21,8 @@ from services.audio import (
 )
 from services.google_drive import GoogleDriveError, upload_run_to_drive
 meeting_notes = ""
-st.set_page_config(page_title="AI Orchestrator", layout="wide")
-st.title("AI Orchestrator — маркетинговый мини-стартап")
+st.set_page_config(page_title="AI Orchestrator AlMa3", layout="wide")
+st.title("AI Orchestrator AlMa3")
 
 # --- session state bootstrap -------------------------------------------------
 if "latest_state" not in st.session_state:
@@ -43,7 +43,7 @@ if "notes_input" not in st.session_state:
     st.session_state.notes_input = ""
 if "business_brief" not in st.session_state:
     st.session_state.business_brief = (
-        "SaaS для аналитики продаж в рознице. Цель — 50 лидов в месяц в Румынии и Молдове."
+        "SaaS for retail sales analytics. Target: 50 leads per month in Romania and Moldova."
     )
 if "manual_transcript" not in st.session_state:
     st.session_state.manual_transcript = ""
@@ -69,20 +69,20 @@ status_placeholder = st.empty()
 
 # --- sidebar controls --------------------------------------------------------
 with st.sidebar:
-    st.subheader("Параметры кампании")
+    st.subheader("Campaign Settings")
     project_title = st.text_input(
-        "Название кампании",
+        "Campaign Title",
         key="project_title_input",
     ).strip()
     model_name = st.text_input(
-        "Модель LLM (опционально)",
+        "LLM Model (optional)",
         key="model_name_input",
     ).strip()
     model_override = model_name or None
 
-    st.subheader("Материалы митинга")
+    st.subheader("Meeting Materials")
     meeting_audio = st.file_uploader(
-        "Аудиозапись митинга",
+        "Meeting audio file",
         type=["mp3", "wav"],
         accept_multiple_files=False,
         key="meeting_audio_file",
@@ -97,14 +97,14 @@ with st.sidebar:
 
     if meeting_audio is not None:
         if st.button(
-            "Транскрибировать аудио",
+            "Transcribe audio",
             disabled=st.session_state.is_running,
             key="transcribe_audio_button",
         ):
             audio_bytes = meeting_audio.getvalue()
             st.session_state.audio_bytes = audio_bytes
             st.session_state.audio_filename = meeting_audio.name or "meeting_audio.mp3"
-            with st.spinner("Расшифровываем аудио…"):
+            with st.spinner("Transcribing audio…"):
                 try:
                     # materials = prepare_meeting_materials(
                     #     audio_bytes,
@@ -118,7 +118,7 @@ with st.sidebar:
                     sum_trans = summarize_transcript(norm_trans)
                     materials = MeetingMaterials(raw_transcript=raw_trans, normalized_transcript=raw_trans, summary=sum_trans)
                 except AudioProcessingError as exc:
-                    st.error(f"Не удалось обработать аудио: {exc}")
+                    st.error(f"Failed to process audio: {exc}")
                     materials = None
             if materials is not None:
                 st.session_state.cached_meeting_materials = materials
@@ -137,37 +137,37 @@ with st.sidebar:
                             )
                     else:
                         st.session_state.notes_input = transcript_for_notes
-                st.success("Транскрипт готов и добавлен в заметки.")
+                st.success("Transcript ready and added to notes.")
                 
     # st.markdown(existing_notes)
     st.text_area(
-        "Транскрипт митинга (можно поправить)",
+        "Meeting Transcript (can be edited)",
         value=existing_notes,
         key="manual_transcript",
         height=180,
     )
-        
-    st.subheader("Заметки и договорённости")
+
+    st.subheader("Notes and Agreements")
     st.text_area(
-        "То, что важно сохранить для отчёта",
-        
+        "Notes and Agreements",
+
         key="notes_input",
         height=160,
     )
 
-    st.subheader("Главный бриф")
+    st.subheader("Main Brief")
     st.text_area(
-        "Опиши продукт, аудиторию и основную цель",
+        "Describe the product, audience, and main goal",
         key="business_brief",
         height=160,
     )
 
-    st.subheader("Дополнительные материалы (RAG)")
+    st.subheader("Additional Materials (RAG)")
     uploaded_files = st.file_uploader(
-        "Текстовые файлы (Markdown/Text)",
+        "Text files (Markdown/Text)",
         accept_multiple_files=True,
         type=["txt", "md"],
-        help="Будут использованы как дополнительный контекст",
+        help="Will be used as additional context for agents (RAG).",
         key="extra_docs_uploader",
     )
 
@@ -177,16 +177,16 @@ with st.sidebar:
             try:
                 content = file.getvalue().decode("utf-8")
             except UnicodeDecodeError:
-                st.warning(f"Не удалось прочитать файл {file.name}. Используйте UTF-8.")
+                st.warning(f"Failed to read file {file.name}. Please use UTF-8.")
                 continue
             extra_documents[file.name] = content
 
-    st.subheader("Агенты")
+    st.subheader("Agents")
     agent_ids = list(AGENT_REGISTRY.keys())
     agent_labels = {agent_id: cfg.title for agent_id, cfg in AGENT_REGISTRY.items()}
 
     selected_agents_raw = st.multiselect(
-        "Кто работает",
+        "Who is working",
         options=agent_ids,
         format_func=lambda agent_id: agent_labels.get(agent_id, agent_id),
         key="agents_for_run",
@@ -204,7 +204,7 @@ with st.sidebar:
         st.session_state.agents_for_summary = filtered_summary
 
     summary_agents_raw = st.multiselect(
-        "В итоговый отчёт",
+        "In the final report",
         options=selected_agents,
         format_func=lambda agent_id: agent_labels.get(agent_id, agent_id),
         key="agents_for_summary",
@@ -213,37 +213,37 @@ with st.sidebar:
         agent_id for agent_id in selected_agents if agent_id in summary_agents_raw
     ] or list(selected_agents)
 
-    st.subheader("Сохранение")
+    st.subheader("Saving")
     st.session_state.save_to_drive = st.checkbox(
-        "Отправить артефакты в Google Drive",
+        "Send artifacts to Google Drive",
         value=st.session_state.save_to_drive,
     )
     if st.session_state.save_to_drive:
         st.session_state.drive_parent_id = st.text_input(
-            "ID папки (опционально)",
+            "Folder ID (optional)",
             value=st.session_state.drive_parent_id,
-            help="Если оставить пустым, папка будет создана в корне диска",
+            help="If left blank, a folder will be created in the root of the drive",
         )
 
     run_button = st.button(
-        "Запустить оркестрацию",
+        "Run orchestration",
         type="primary",
         disabled=st.session_state.is_running or not selected_agents,
         key="run_workflow_button",
     )
     stop_button = st.button(
-        "Остановить процесс",
+        "Stop process",
         type="secondary",
         disabled=not st.session_state.is_running,
         key="stop_workflow_button",
     )
 
     if not selected_agents:
-        st.warning("Выбери хотя бы одного агента для запуска.")
+        st.warning("Select at least one agent to run.")
 
     if stop_button:
         st.session_state.stop_requested = True
-        st.info("Остановка запрошена. Процесс завершится после текущего шага.")
+        st.info("Stop requested. The process will finish after the current step.")
 
 # --- orchestration trigger ---------------------------------------------------
 if run_button:
@@ -254,7 +254,7 @@ if run_button:
     business_brief_text = st.session_state.business_brief.strip()
     if not business_brief_text:
         st.session_state.is_running = False
-        st.warning("Заполни главный бриф перед запуском.")
+        st.warning("Fill in the main brief before starting.")
         st.stop()
 
     notes_text = st.session_state.notes_input.strip()
@@ -277,7 +277,7 @@ if run_button:
             )
         except AudioProcessingError as exc:
             st.session_state.is_running = False
-            st.error(f"Не удалось обработать аудио: {exc}")
+            st.error(f"Audio processing error: {exc}")
             st.stop()
         st.session_state.cached_meeting_materials = meeting_materials
         st.session_state.audio_bytes = audio_bytes
@@ -330,7 +330,7 @@ if run_button:
 
     brief_sections = [business_brief_text]
     if notes_text:
-        brief_sections.append(f"Заметки митинга:\n{notes_text}")
+        brief_sections.append(f"Meeting Notes:\n{notes_text}")
     base_brief = "\n\n".join(brief_sections)
 
     meeting_summary_text = (
@@ -343,7 +343,7 @@ if run_button:
     initial_state = prepare_initial_state(
         base_brief,
         model=model_override,
-        project_title=project_title or "Маркетинговая кампания",
+        project_title=project_title or "Marketing Campaign",
         extra_documents=attachments or None,
         selected_agents=selected_agents,
         agents_for_summary=summary_agents,
@@ -376,11 +376,11 @@ if run_button:
         st.session_state.cached_meeting_materials = meeting_materials
 
     total_steps = 2 + len(selected_agents)
-    progress = progress_placeholder.progress(0, text="Подготовка к запуску…")
+    progress = progress_placeholder.progress(0, text="Preparing to start...")
 
     step_labels = {
-        "manager_plan": "Менеджер — планирование",
-        "manager_summary": "Менеджер — финальная сборка",
+        "manager_plan": "Manager - Planning",
+        "manager_summary": "Manager - Final Assembly",
     }
     for agent_id in selected_agents:
         step_labels[agent_id] = agent_labels.get(agent_id, agent_id)
@@ -395,7 +395,7 @@ if run_button:
             completed / max(total_steps, 1),
             text=f"{completed}/{total_steps} · {label}",
         )
-        status_placeholder.info(f"Текущий шаг: {label}")
+        status_placeholder.info(f"Current step: {label}")
         st.session_state.latest_state = current_state
 
     try:
@@ -408,7 +408,7 @@ if run_button:
         st.session_state.is_running = False
         progress_placeholder.empty()
         status_placeholder.empty()
-        st.error(f"Ошибка при запуске оркестрации: {exc}")
+        st.error(f"Error starting orchestration: {exc}")
         st.stop()
 
     progress_placeholder.empty()
@@ -417,9 +417,9 @@ if run_button:
     st.session_state.latest_state = final_state
 
     if final_state.get("interrupted"):
-        st.warning("Процесс остановлен. Доступны промежуточные результаты.")
+        st.warning("Process interrupted. Intermediate results are available.")
     else:
-        st.success("Готово! Кампания собрана.")
+        st.success("Done! Campaign assembled.")
 
     if (
         st.session_state.save_to_drive
@@ -427,7 +427,7 @@ if run_button:
         and st.session_state.run_id
     ):
         run_dir_path = (rag.ARTIFACT_ROOT / st.session_state.run_id).resolve()
-        with st.spinner("Загружаем артефакты в Google Drive…"):
+        with st.spinner("Uploading artifacts to Google Drive..."):
             try:
                 folder_link = upload_run_to_drive(
                     st.session_state.run_id,
@@ -435,10 +435,10 @@ if run_button:
                     parent_id=st.session_state.drive_parent_id or None,
                 )
             except GoogleDriveError as exc:
-                st.warning(f"Не удалось загрузить артефакты в Google Drive: {exc}")
+                st.warning(f"Failed to upload artifacts to Google Drive: {exc}")
             else:
                 st.session_state.drive_last_link = folder_link
-                st.success(f"Артефакты сохранены в Google Drive: {folder_link}")
+                st.success(f"Artifacts saved to Google Drive: {folder_link}")
 
     st.session_state.stop_requested = False
 
@@ -448,20 +448,20 @@ run_id = st.session_state.get("run_id")
 
 progress_tab, materials_tab, artifacts_tab, summary_tab = st.tabs(
     [
-        "Прогресс",
-        "Материалы митинга",
-        "Артефакты",
-        "Итоговый отчёт",
+        "Progress",
+        "Meeting Materials",
+        "Artifacts",
+        "Final Report",
     ]
 )
 
 with progress_tab:
-    st.subheader("Доска задач")
+    st.subheader("Task Board")
     if latest_state is None:
-        st.info("Запусти процесс, чтобы увидеть прогресс агентов.")
+        st.info("Start the process to see agent progress.")
     else:
         if latest_state.get("interrupted"):
-            st.warning("Последний запуск был остановлен до завершения всех шагов.")
+            st.warning("The last run was interrupted before all steps were completed.")
 
         board = (latest_state or {}).get("board", {})
         status_columns: Dict[str, List[tuple[str, str, str]]] = {
@@ -499,12 +499,12 @@ with progress_tab:
 
 
 with materials_tab:
-    st.subheader("Саммари митинга")
+    st.subheader("Meeting Summary")
     if existing_notes :
         meeting_notes, tasks_section = text_modify(existing_notes)
         meeting_notes = paragraph_modify(meeting_notes)
         meeting_notes = key_points(meeting_notes)
-        st.expander("Параграфы из митинга", expanded=False).markdown(meeting_notes)
+        st.expander("Paragraphs from the Meeting", expanded=False).markdown(meeting_notes)
         # prepare a list of tasks out of task text (tasks_section)
         # tasks_list = task_to_list(tasks_section)
         # tasks_section = "\n".join([f"{task_content}" for task_content in tasks_list])
@@ -513,22 +513,22 @@ with materials_tab:
         # st.expander("Задачи из митинга", expanded=False).markdown(tasks_section)
         tasks_list = task_to_list(tasks_section)
         tasks_markdown = "\n\n---\n\n".join(tasks_list)  # разделим линии
-        st.expander("Задачи из митинга", expanded=False).markdown(tasks_markdown)
+        st.expander("Tasks from the Meeting", expanded=False).markdown(tasks_markdown)
 
     elif existing_notes:
-        st.info("Саммари появится после завершения оркестрации.")
+        st.info("Summary will appear after orchestration is complete.")
     else:
-        st.info("После запуска здесь появится саммари и транскрипт митинга.")
+        st.info("After starting, the summary and meeting transcript will appear here.") 
 
     if st.session_state.notes_input.strip():
-        st.markdown("**Заметки**")
+        st.markdown("**Notes**")
         st.markdown(st.session_state.notes_input)
 
     if latest_state and latest_state.get("transcript_clean"):
-        with st.expander("Нормализованный транскрипт"):
+        with st.expander("Normalized Transcript"):
             st.markdown(latest_state["transcript_clean"])
     elif st.session_state.manual_transcript.strip():
-        with st.expander("Транскрипт (черновик)"):
+        with st.expander("Transcript (Draft)"):
             st.markdown(st.session_state.manual_transcript)
 
     # if latest_state and latest_state.get("transcript_raw"):
@@ -536,12 +536,12 @@ with materials_tab:
     #         st.markdown(latest_state["transcript_raw"])
 
     if latest_state and latest_state.get("audio_path"):
-        st.caption(f"Исходный аудио-файл сохранён как `{latest_state['audio_path']}`")
+        st.caption(f"Original audio file saved as `{latest_state['audio_path']}`")
 
 with artifacts_tab:
-    st.subheader("Артефакты кампании")
+    st.subheader("Campaign Artifacts")
     if st.session_state.drive_last_link:
-        st.info(f"Артефакты выгружены в Google Drive: {st.session_state.drive_last_link}")
+        st.info(f"Artifacts uploaded to Google Drive: {st.session_state.drive_last_link}")
 
     artifacts = rag.list_artifacts(run_id) if run_id else []
     run_dir_path: Optional[Path] = (rag.ARTIFACT_ROOT / run_id) if run_id else None
@@ -551,7 +551,7 @@ with artifacts_tab:
             with st.expander(artifact.title):
                 st.markdown(artifact.path.read_text(encoding="utf-8"))
     else:
-        st.caption("Артефакты появятся после выполнения оркестрации.")
+        st.caption("Artifacts will appear after orchestration is complete.")
 
     if run_dir_path and run_dir_path.exists():
         zip_buffer = io.BytesIO()
@@ -560,17 +560,17 @@ with artifacts_tab:
                 if path.is_file():
                     archive.write(path, arcname=path.name)
         st.download_button(
-            "Скачать все файлы ZIP",
+            "Download all files as ZIP",
             data=zip_buffer.getvalue(),
             file_name=f"{run_id}_artifacts.zip",
             mime="application/zip",
         )
 
 with summary_tab:
-    st.subheader("Итоговая сводка")
+    st.subheader("Final Report")
     if latest_state and latest_state.get("summary"):
         st.markdown(latest_state["summary"])
     elif latest_state:
-        st.info("Финальная сводка ещё формируется.")
+        st.info("The final report is still being generated.")
     else:
-        st.info("Запусти оркестрацию, чтобы получить финальный отчёт.")
+        st.info("Start the orchestration to get the final report.")

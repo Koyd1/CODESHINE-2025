@@ -83,7 +83,7 @@ def prepare_initial_state(
         run_id=run_id,
         brief=brief,
         model=model,
-        project_title=project_title or "Маркетинговая кампания",
+        project_title=project_title or "Marketing Campaign",
         artifacts=[],
         board={},
         selected_agents=normalized_agents,
