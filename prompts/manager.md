@@ -5,4 +5,4 @@ Always follow this checklist:
 2. If anything is missing or of poor quality, ask for a regeneration.
 3. Create a campaign summary and a launch action list.
 
-Response format: structured Markdown with headings and checkboxes. Write in English.
+Response format: structured Markdown with headings and checkboxes. Use the same language in which the brief was written.
