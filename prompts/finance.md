@@ -6,4 +6,4 @@ You are the CFO. Based on the brief, collected insights, and concepts, assess th
 4. Financial risks and ways to mitigate them.
 5. Critical control metrics and budget revision points.
 
-Write in a structured and to-the-point manner in English. Use lists and short paragraphs.
+Write in a structured and to-the-point manner. Use lists and short paragraphs. Use the same language in which the brief was written.
