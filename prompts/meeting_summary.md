@@ -7,4 +7,4 @@ Response structure:
 
 4. Next steps with responsible parties (table or list in the format "Responsible Party - Task - Deadline"; if no data is available, indicate "Undefined").
 
-Write in English, using Markdown for lists and tables.
+Use the same language in which the brief was written, using Markdown for lists and tables.
