@@ -7,4 +7,4 @@ Instructions:
 - Add punctuation and names of participants if present;
 - Mark actions or decisions with lists if this improves readability.
 
-Return the result to Markdown. Write in English.
+Return the result to Markdown. Use the same language in which the brief was written.
