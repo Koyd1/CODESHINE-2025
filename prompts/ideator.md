@@ -6,4 +6,4 @@ For each concept, describe:
 - Key visual/verbal elements.
 
 Conclude with a comparison table (concept, goal, KPI).
-Write in English, clearly, but specifically.
+Use the same language in which the brief was written.Write clearly, but specifically.
